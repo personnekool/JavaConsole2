@@ -3,9 +3,6 @@ plugins {
     id "application"
 }
 
-// Global variables
-def group = "com.app"
-def mainClass = "Main"
 // Project Methods
 setDescription("CLI ToDoApplication")
 setGroup("cpm.app")
@@ -24,7 +21,7 @@ jar{
         ]
         attributes(manifestAttributes)
     }
-    archiveBaseName.set('ToDoList')
+    archiveBaseName.set(jarFileName)
 }
 
 run {
@@ -56,7 +53,7 @@ tasks.register('Task1'){
     setGroup('Personal')
     setDescription('Task1 prints hello in the console')
     doLast{
-        print "Hello"
+        print msg1
     }
 }
 
@@ -64,6 +61,6 @@ tasks.register('Task2'){
     setDescription('Task2 prints world in the console')
     setGroup("Personal")
     doLast{
-        print "World"
+        print msg2
     }
 }
