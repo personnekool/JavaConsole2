@@ -1,25 +1,10 @@
-
-// Define dependencies to use in build.gradle file
-buildscript{
-    repositories{
-        mavenCentral()
-    }
-    dependencies{
-        // https://mvnrepository.com/artifact/org.apache.groovy/groovy-all
-        classpath 'org.apache.groovy:groovy-all:5.0.0-alpha-5'
-        // https://mvnrepository.com/artifact/commons-io/commons-io
-        classpath 'commons-io:commons-io:2.15.1'
-
-    }
-}
-
 plugins {
     id "application"
 }
 
 // Project Methods
 setDescription("CLI ToDoApplication")
-setGroup("cpm.app")
+setGroup("com.app")
 setVersion("1.0")
 
 java{
@@ -31,11 +16,11 @@ jar{
     manifest {
         def manifestAttributes = [
                 "Manifest-Version":getVersion(),
-                "Main-Class":"${group}.${mainClass}"
+                "Main-Class": MAIN_CLASS_NAME
         ]
         attributes(manifestAttributes)
     }
-    archiveBaseName.set(jarFileName)
+    archiveBaseName.set(JAR_FILE_NAME)
 }
 
 run {
@@ -43,10 +28,8 @@ run {
 }
 
 application{
-    mainClassName = "${group}.${mainClass}" // resolve to main function location: com.app.Main
+    mainClassName = MAIN_CLASS_NAME.toString() // resolve to main function location: com.app.Main
 }
-
-version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -107,3 +90,23 @@ tasks.register('Task4',DefaultTask1)
 tasks.register('Task5', DefaultTask2,"Personal","Task Constructor with arguments", "Task5 constructor is running")
 // Exercise 14
 tasks.register('Task6', DefaultTask3, "Task6 is running", [Task4, Task5])
+// Exercise 15 (Task change release propoertyin version.properties to true)
+tasks.register('Task7', MakeReleaseVersionTask){
+    versionPropertyFile = file("./version.properties")
+    release=true;
+}
+tasks.register('Task8', MakeReleaseVersionTask){
+    versionPropertyFile = file("./version.properties")
+    release=false
+}
+// Exercise 16
+tasks.register('Task9'){
+    setGroup('Versioning')
+    setDescription('Change jar version according to release value found in version.properties')
+    //dependsOn(Task8) // set release to false
+    dependsOn(Task7) // set release to true
+    doLast{
+        setVersion(ProjectVersion.readVersion('./version.properties').toString())
+    }
+    finalizedBy(clean, build)
+}
