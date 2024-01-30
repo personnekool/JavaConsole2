@@ -1,4 +1,18 @@
 
+// Define dependencies to use in build.gradle file
+buildscript{
+    repositories{
+        mavenCentral()
+    }
+    dependencies{
+        // https://mvnrepository.com/artifact/org.apache.groovy/groovy-all
+        classpath 'org.apache.groovy:groovy-all:5.0.0-alpha-5'
+        // https://mvnrepository.com/artifact/commons-io/commons-io
+        classpath 'commons-io:commons-io:2.15.1'
+
+    }
+}
+
 plugins {
     id "application"
 }
@@ -41,6 +55,11 @@ repositories {
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    // https://mvnrepository.com/artifact/commons-io/commons-io
+    implementation 'commons-io:commons-io:2.15.1'
+    // https://mvnrepository.com/artifact/org.apache.groovy/groovy
+    implementation 'org.apache.groovy:groovy:5.0.0-alpha-5'
+
 }
 
 test {
@@ -64,3 +83,27 @@ tasks.register('Task2'){
         print msg2
     }
 }
+
+//Exercise 2.10
+// Next two lines change order of execution with dependencies
+//Task1.mustRunAfter(Task2)
+Task2.mustRunAfter(Task1)
+
+tasks.register('Task3') {
+    description = 'Task3 executes Task1 and Task2'
+    group = 'Personal'
+    dependsOn(['Task1', 'Task2'])
+    doLast {
+        print "Task3 depends on Task1 and Task2"
+    }
+}
+// Exercise 2.11 (Finalizers change order of execution (NO DEPENDENCY)
+//Task1.finalizedBy(Task2)    // gradle Task1
+Task2.finalizedBy(Task1)
+
+// Exercise 12
+tasks.register('Task4',DefaultTask1)
+// Exercise 13
+tasks.register('Task5', DefaultTask2,"Personal","Task Constructor with arguments", "Task5 constructor is running")
+// Exercise 14
+tasks.register('Task6', DefaultTask3, "Task6 is running", [Task4, Task5])

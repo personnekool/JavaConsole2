@@ -6,22 +6,17 @@ import javax.inject.Inject
 
 
 
-abstract class CustomTask extends DefaultTask {
-    private final String msg
-
+abstract class DefaultTask1 extends DefaultTask {
     @Inject
-    CustomTask(String group, String descr, String msg) {
+    DefaultTask1() {
         // Task configuration
-        setGroup(group)
-        description = descr
-        // Set task variables
-        this.msg = msg
-
+        setGroup('Personal')
+        description = 'Default task with no constructor arguments'
     }
 
     @TaskAction
     void start(){
-        println msg
+        println getDescription()
     }
 }
 
