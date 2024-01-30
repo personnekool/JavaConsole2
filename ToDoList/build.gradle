@@ -1,13 +1,40 @@
+
 plugins {
-    id 'application'
+    id "application"
+}
+
+// Global variables
+def group = "com.app"
+def mainClass = "Main"
+// Project Methods
+setDescription("CLI ToDoApplication")
+setGroup("cpm.app")
+setVersion("1.0")
+
+java{
+    toolchain {
+        setLanguageVersion(JavaLanguageVersion.of(17))
+    }
+}
+jar{
+    manifest {
+        def manifestAttributes = [
+                "Manifest-Version":getVersion(),
+                "Main-Class":"${group}.${mainClass}"
+        ]
+        attributes(manifestAttributes)
+    }
+    archiveBaseName.set('ToDoList')
+}
+
+run {
+    standardInput = System.in
 }
 
 application{
-    group = 'com.app'               // Package where main function can be found
-    mainClassName = "${group}.Main" // resolve to main function location: com.app.Main
+    mainClassName = "${group}.${mainClass}" // resolve to main function location: com.app.Main
 }
 
-group = 'com.toDoList'
 version = '1.0-SNAPSHOT'
 
 repositories {
@@ -21,4 +48,22 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+
+// Gradle tasks
+tasks.register('Task1'){
+    setGroup('Personal')
+    setDescription('Task1 prints hello in the console')
+    doLast{
+        print "Hello"
+    }
+}
+
+tasks.register('Task2'){
+    setDescription('Task2 prints world in the console')
+    setGroup("Personal")
+    doLast{
+        print "World"
+    }
 }
