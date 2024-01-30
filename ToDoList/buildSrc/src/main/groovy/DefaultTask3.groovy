@@ -1,0 +1,3 @@
+
+class DefaultTask3 {
+}
