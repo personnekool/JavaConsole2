@@ -1,3 +1,6 @@
+import org.apache.commons.io.FileUtils
+import org.gradle.api.GradleException
+
 class ProjectVersion {
     private int minor
     private int major
@@ -25,6 +28,45 @@ class ProjectVersion {
     ProjectVersion(int minor, int major, boolean release){
         this(minor,major)
         this.release = release
+    }
+
+    ProjectVersion(File versionFile){
+        if(!versionFile.exists()){
+            throw new GradleException("File:${versionFile.toString()}, does not exists")
+        }
+        Properties versionProperties = new Properties()
+        versionFile.withInputStream {stream->versionProperties.load(stream)}
+        this.minor = versionProperties.minor.toInteger()
+        this.major = versionProperties.major.toInteger()
+        this.release = versionProperties.release.toBoolean()
+    }
+    void writeVersionFile(File versionFile){
+        if(!versionFile.exists()){
+            throw new GradleException("File:${versionFile.toString()} does not exists")
+        }
+        List<String> lines = FileUtils.readLines(versionFile,'UTF-8')
+        for(int i = 0; i < lines.size(); i++){
+            if(lines.get(i).startsWith("minor")){
+                lines.set(i,"minor=${getMinor()}")
+            }else if(lines.get(i).startsWith('major')){
+                lines.set(i,"major=${getMajor()}")
+            }
+        }
+        FileUtils.writeLines(versionFile,lines);
+
+    }
+
+    void increaseMinor(){
+        this.minor++;
+    }
+    int getMinor(){
+        return this.minor;
+    }
+    void increaseMajor(){
+        this.major++;
+    }
+    int getMajor(){
+        return this.major;
     }
 
     @Override

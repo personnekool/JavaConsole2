@@ -110,3 +110,32 @@ tasks.register('Task9'){
     }
     finalizedBy(clean, build)
 }
+
+// Try to put this code in a groovy file
+tasks.addRule("Pattern: increment<Classifier>Version"){
+    String taskName -> if(taskName.startsWith('increment') && taskName.endsWith('Version')){
+        tasks.register(taskName){
+            doLast{
+                // Groovy minus() overload operator for String class
+                String classifier = (taskName.toLowerCase()-'increment'-'version')
+                File versionFile = new File('./version.properties')
+                ProjectVersion version = new ProjectVersion(versionFile);
+                switch(classifier){
+                    case 'major':
+                        println 'major version is modified'
+                        version.increaseMajor()
+                        break
+                    case 'minor':
+                        println 'minor version is modified'
+                        version.increaseMinor()
+                        break
+                    default:
+                        throw new GradleException('Invalid version type classifier')
+                }
+                version.writeVersionFile(versionFile)
+                setVersion(version.toString())
+            }
+            finalizedBy(clean, build)
+        }
+    }
+}
